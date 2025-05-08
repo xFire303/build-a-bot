@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import parts from '../data/parts';
 import { toCurrency } from '../shared/formatter';
 
@@ -80,6 +80,10 @@ const selectedRightArmIndex = ref(0);
 const selectedBaseIndex = ref(0);
 const cart = ref([]);
 
+onMounted(() => {
+  console.log('Robot Builder mounted');
+});
+
 const selectedRobot = computed(() => ({
   head: availableParts.heads[selectedHeadIndex.value],
   torso: availableParts.torsos[selectedTorsoIndex.value],
@@ -87,6 +91,8 @@ const selectedRobot = computed(() => ({
   rightArm: availableParts.arms[selectedRightArmIndex.value],
   base: availableParts.bases[selectedBaseIndex.value],
 }));
+
+const headBorderColor = computed(() => (selectedRobot.value.head.onSale ? 'red' : '#aaa'));
 
 const addToCart = () => {
   const robot = selectedRobot.value;
@@ -171,6 +177,10 @@ const selectPreviousBase = () => {
   width: 200px;
   height: 200px;
   border: 3px solid #aaa;
+}
+
+.top.part {
+  border: 3px solid v-bind(headBorderColor);
 }
 
 .part img {
