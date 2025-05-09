@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content" v-if="partsStore.parts">
     <div class="preview">
       <CollapsibleSection>
         <template v-slot:collapse>&#x25B2; Hide</template>
@@ -25,20 +25,35 @@
         {{ selectedRobot.head.title }}
         <span v-if="selectedRobot.head.onSale" class="sale">Sale!</span>
       </div>
-      <PartSelector :parts="availableParts.heads"
-       position="top" @partSelected="part => selectedRobot.head = part" />
+      <PartSelector
+        :parts="partsStore.parts.heads"
+        position="top"
+        @partSelected="(part) => (selectedRobot.head = part)"
+      />
     </div>
     <div class="middle-row">
-      <PartSelector :parts="availableParts.arms"
-       position="left" @partSelected="part => selectedRobot.leftArm = part" />
-      <PartSelector :parts="availableParts.torsos" position="center"
-        @partSelected="part => selectedRobot.torso = part" />
-      <PartSelector :parts="availableParts.arms" position="right"
-        @partSelected="part => selectedRobot.rightArm = part" />
+      <PartSelector
+        :parts="partsStore.parts.arms"
+        position="left"
+        @partSelected="(part) => (selectedRobot.leftArm = part)"
+      />
+      <PartSelector
+        :parts="partsStore.parts.torsos"
+        position="center"
+        @partSelected="(part) => (selectedRobot.torso = part)"
+      />
+      <PartSelector
+        :parts="partsStore.parts.arms"
+        position="right"
+        @partSelected="(part) => (selectedRobot.rightArm = part)"
+      />
     </div>
     <div class="bottom-row">
-      <PartSelector :parts="availableParts.bases"
-       position="bottom" @partSelected="part => selectedRobot.base = part" />
+      <PartSelector
+        :parts="partsStore.parts.bases"
+        position="bottom"
+        @partSelected="(part) => (selectedRobot.base = part)"
+      />
     </div>
   </div>
 </template>
@@ -46,13 +61,15 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue';
 import { useCartStore } from '@/stores/cartStore';
-import parts from '../data/parts';
+import { usePartsStore } from '@/stores/partsStore';
+
 import PartSelector from './PartSelector.vue';
 import CollapsibleSection from '../shared/CollapsibleSection.vue';
 
 const cartStore = useCartStore();
+const partsStore = usePartsStore();
 
-const availableParts = parts;
+partsStore.getParts();
 
 onMounted(() => {
   console.log('Robot Builder mounted');
@@ -70,11 +87,8 @@ const headBorderColor = computed(() => (selectedRobot.value.head.onSale ? 'red' 
 
 const addToCart = () => {
   const robot = selectedRobot.value;
-  const cost = robot.head.cost +
-    robot.torso.cost +
-    robot.leftArm.cost +
-    robot.rightArm.cost +
-    robot.base.cost;
+  const cost =
+    robot.head.cost + robot.torso.cost + robot.leftArm.cost + robot.rightArm.cost + robot.base.cost;
   cartStore.cart.push({
     ...robot,
     cost,

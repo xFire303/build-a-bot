@@ -4,22 +4,22 @@
     <table>
       <thead>
         <tr>
-          <th class="robot-title">
-            Robot
-          </th>
-          <th class="cost">
-            Cost
-          </th>
+          <th class="robot-title">Robot</th>
+          <th class="cost">Cost</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(robot, index) in cartStore.cart" :key="index">
           <td class="robot-title">
-            <img :src="robot.head.imageUrl" alt="robot head"/> {{ robot.head.title }}
+            <img :src="robot.head.imageUrl" alt="robot head" /> {{ robot.head.title }}
           </td>
           <td class="cost">
             {{ toCurrency(robot.cost) }}
           </td>
+        </tr>
+        <tr class="total">
+          <td>Total</td>
+          <td>{{ toCurrency(cartStore.cartTotal) }}</td>
         </tr>
       </tbody>
     </table>
@@ -53,5 +53,8 @@ th {
 }
 .cost {
   text-align: right;
+}
+.total {
+  font-weight: bold;
 }
 </style>
